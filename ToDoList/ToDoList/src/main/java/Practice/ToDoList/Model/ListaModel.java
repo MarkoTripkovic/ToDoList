@@ -7,7 +7,6 @@ public class ListaModel {
 	
 	private String title;
 	private String text;
-	private String author;
 	private String date;
 	private int id;
 	private int userId;
@@ -19,7 +18,6 @@ public class ListaModel {
 		this.id = id;
 		this.text = text;
 		this.title = title;
-		this.author = author;
 		this.userId = userID;
 		this.date = date;
 		
@@ -36,12 +34,6 @@ public class ListaModel {
 	}
 	public void setText(String text) {
 		this.text = text;
-	}
-	public String getAuthor() {
-		return author;
-	}
-	public void setAuthor(String author) {
-		this.author = author;
 	}
 	public String getData() {
 		return date;

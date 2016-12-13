@@ -1,73 +1,64 @@
 package Practice.ToDoList.Resource;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import Practice.ToDoList.DAO.LoginAuthenticationDAO;
 import Practice.ToDoList.DAO.UserDAO;
-import Practice.ToDoList.Model.LoginAuthenticationModel;
-import Practice.ToDoList.Model.UserModel;
+import Practice.ToDoList.Exception.NothingFoundException;
+import Practice.ToDoList.Model.ErrorMessages;
 import Practice.ToDoList.Service.ListService;
 import Practice.ToDoList.Service.LoginAuthenticationService;
 import Practice.ToDoList.Service.LoginSecurity;
-import Practice.ToDoList.Token.Token;
-@Path("/login")
-public class UserResource {
+import Practice.ToDoList.Service.UserService;
+@Path("/user")
+public class UserResource{
 
 	LoginSecurity loginsecurity = new LoginSecurity();
 	LoginAuthenticationService service = new LoginAuthenticationService();
 	LoginAuthenticationDAO dao = new LoginAuthenticationDAO();
 	UserDAO userdao = new UserDAO();
 	ListService listservice = new ListService();
+	UserService userservice =new UserService();
 	
-	
-	
-    private String secret = "secret";
-   
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Token checkUsernamePassword(LoginAuthenticationModel postModel){
-		
-		String username=dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getUsername();
-		String password = dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getPassword();
-		int id = dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getId();
-		String email = dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getEmail();
-		Claims claims = Jwts.claims().setSubject("info");
-		claims.put("id", id);
-		claims.put("username", username);
-		claims.put("password", password);
-		claims.put("email", email);
-	    Token token = new Token(Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256,secret).compact());
-		
-		return token;
-	}
 	
 	@GET
-	@Path("/user")
+	@Path("/{idofuser}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserModel getUserInfo(UserModel model){
-		try{
-		
-		return model;
-		
-		}catch (JwtException | ClassCastException e) {
-            return null;
-        }
-		
+	public Response getUserInfo(@PathParam("idofuser") int id){
+		if(userservice.getUser(id)==null){
+			throw new NothingFoundException("Userwiht id: "+id+" not found");
+		}
+		return Response.status(Status.ACCEPTED).entity(userservice.getUser(id)).build();	
+	}
+	
+	@DELETE
+	@Path("/{idofuser}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteUsere(@PathParam("idofuser") int id){
+		if(userservice.deleteUsere(id)==false){
+			ErrorMessages message = new ErrorMessages("Nothing to delete",417);
+			Response response = Response.status(Status.BAD_REQUEST).entity(message).build();
+			throw new WebApplicationException(response);		
+		}else{
+			
+			listservice.deleteAllItemsFromList(id);
+			System.out.println("else");
+			ErrorMessages message = new ErrorMessages("Deleted",200);			
+			return Response.status(Status.OK).entity(message).build();
+		}
 	}
 	
 	
+
 	
 	
 }
