@@ -21,6 +21,14 @@ public class ListService {
 		
 		return listdao.getItemFromList(id);
 	}
+	public boolean deleteItemFromList(int id){
+		
+		return listdao.delteItemFromList(id);
+	}
+	 public void deleteAllItemsFromList(int id){
+		
+		 listdao.deleteallitemsFromlist(id);
+	}
 		
 		
 	

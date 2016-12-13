@@ -26,9 +26,8 @@ public class ListDAO {
 	    	  model.setUserId(rs.getInt("UserId"));
 	    	  model.setTitle(rs.getString("Title"));
 	    	  model.setText(rs.getString("Text"));
-	    	  model.setAuthor(rs.getString("Author"));
+	    	  model.setData(rs.getString("Date"));
 	    	  listamodela.add(model);
-	    	  System.out.println(model.getTitle());
 	       }
 	       return listamodela;
 		}catch (SQLException e) {
@@ -43,12 +42,11 @@ public class ListDAO {
 		System.out.println(model.getTitle());
 		
 	    try {
-	        PreparedStatement ps = connection.prepareStatement("INSERT INTO Podaci(Title, Text, Author, Date, UserId) VALUES(?,?,?,?,?)");
+	        PreparedStatement ps = connection.prepareStatement("INSERT INTO Podaci(Title, Text, Date, UserId) VALUES(?,?,?,?)");
 	        ps.setString(1, model.getTitle());
 	        ps.setString(2, model.getText());
-	        ps.setString(3, model.getAuthor());
-	        ps.setString(4, model.getData());
-	        ps.setInt(5, model.getUserId());
+	        ps.setString(3, model.getData());
+	        ps.setInt(4, model.getUserId());
 	        
 	        ps.execute();
 	        System.out.println("Executed querry");
@@ -75,8 +73,8 @@ public class ListDAO {
 	    	  model.setUserId(rs.getInt("UserId"));
 	    	  model.setTitle(rs.getString("Title"));
 	    	  model.setText(rs.getString("Text"));
-	    	  model.setAuthor(rs.getString("Author"));
-	    	  System.out.println(model.getTitle());
+	    	  model.setData(rs.getString("Date"));
+	    	  
 	    	  return model;
 	    	  
 	    	   
@@ -89,9 +87,37 @@ public class ListDAO {
 		return null;
 		
 	}
-			
-			
+	
+	public boolean delteItemFromList(int id){
+		Connection connection = DataBaseConnection.getConnection();
+		try {
+	        PreparedStatement ps = connection.prepareStatement("DELETE  FROM Podaci WHERE id = ?");
+	       ps.setInt(1,id);
+	       ps.execute();
+		return true;
+	}catch (SQLException e) {
+		e.printStackTrace();
+		System.out.println("Error");
+	}	
+		return false;
+				
+	}
+	
+	public void deleteallitemsFromlist(int id){
+		Connection connection = DataBaseConnection.getConnection();
+		try {
+	        PreparedStatement ps = connection.prepareStatement("DELETE FROM Podaci WHERE UserId = ?");
+	       ps.setInt(1,id);
+	       ps.execute();
 		
+	}catch (SQLException e) {
+		e.printStackTrace();
+		System.out.println("Error");
+	}	
+		
+		
+		
+	}
 		
 	
 

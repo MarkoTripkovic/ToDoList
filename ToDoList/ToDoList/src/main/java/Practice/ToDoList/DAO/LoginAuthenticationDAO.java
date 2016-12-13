@@ -27,9 +27,6 @@ public class LoginAuthenticationDAO {
 	        	usermodel.setUsername(rs.getString("username"));
 	        	usermodel.setPassword(rs.getString("password"));
 	        	usermodel.setEmail(rs.getString("email"));
-	        	System.out.println("id je :"+usermodel.getId());
-	        	System.out.println("username je :"+usermodel.getUsername());       	
-	        	System.out.println("password je :"+usermodel.getPassword());
 	        	return usermodel;
 	        }
 	        

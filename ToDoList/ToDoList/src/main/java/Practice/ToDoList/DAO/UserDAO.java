@@ -42,6 +42,44 @@ public class UserDAO {
 		}	
 		return false;
 	}
+	public UserModel getUser(int id){
+		Connection connection = DataBaseConnection.getConnection();
+		try {
+	        PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE id = ?");
+	        
+	       ps.setInt(1,id);
+	       ResultSet rs = ps.executeQuery();
+	       if(rs.next()){
+	    	   UserModel model = new UserModel();
+	    	   model.setId(rs.getInt("id"));
+	    	   model.setUsername(rs.getString("username"));
+	    	   model.setPassword(rs.getString("password"));
+	    	   model.setEmail(rs.getString("email"));
+	    	  return model;
+	       }
+	       
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return null;
+		
+		
+	}
+	public boolean deleteUser(int id){
+		
+		Connection connection = DataBaseConnection.getConnection();
+		try {
+	        PreparedStatement ps = connection.prepareStatement("DELETE FROM Users WHERE id = ?");
+	        
+	       ps.setInt(1,id);
+	       ps.execute();
+	       return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	
 
 }
