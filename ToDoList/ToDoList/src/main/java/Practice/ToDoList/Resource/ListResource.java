@@ -34,15 +34,34 @@ public class ListResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{idofuser}")
 	public List<ListaModel> getListForUser(@PathParam("idofuser") int id){
-
+		
+		if(listservice.getListFoUser(id)==null){
+			ErrorMessages message = new ErrorMessages("No user with that id",400);
+			Response response = Response.status(Status.BAD_REQUEST).entity(message).build();
+			throw new WebApplicationException(response);
+		}else{
+		
 		return listservice.getListFoUser(id);
+		}
+		
+			
+		
 	}
 	
 	@GET
 	@Path("/listitem/{itemoflist}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListaModel getItemFromList(@PathParam("itemoflist") int id){
-		return listservice.getItemFromList(id);
+	public Response getItemFromList(@PathParam("itemoflist") int id){
+		if(listservice.getItemFromList(id)==null){
+			throw new WebApplicationException(Status.BAD_REQUEST);
+		}else{
+			return Response.status(Status.ACCEPTED).entity(listservice.getItemFromList(id)).build();
+			
+		}
+		
+			
+			
+		
 	}
 	
 	@DELETE

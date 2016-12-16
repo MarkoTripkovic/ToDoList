@@ -33,7 +33,7 @@ public class UserResource{
 	@GET
 	@Path("/{idofuser}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUserInfo(@PathParam("idofuser") int id){
+	public Response getUserInfo(@PathParam("idofuser")int id){
 		if(userservice.getUser(id)==null){
 			throw new NothingFoundException("Userwiht id: "+id+" not found");
 		}

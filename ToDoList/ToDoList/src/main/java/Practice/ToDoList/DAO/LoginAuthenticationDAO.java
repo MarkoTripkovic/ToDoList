@@ -31,7 +31,6 @@ public class LoginAuthenticationDAO {
 	        }
 	        
 	    } catch (SQLException ex) {
-	    	System.out.println("Catch");
 	        ex.printStackTrace();
 	    }
 	    return null;

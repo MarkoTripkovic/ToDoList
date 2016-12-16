@@ -37,7 +37,7 @@ public class CreateUserResource {
 			else{
 		
 				ErrorMessages message = new ErrorMessages("Username alredy exist",417);
-				Response response = Response.status(Status.BAD_REQUEST).entity(message).build();
+				Response response = Response.status(Status.UNAUTHORIZED).entity(message).build();
 				throw new WebApplicationException(response);
 				
 			}

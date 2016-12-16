@@ -1,6 +1,7 @@
 package Practice.ToDoList.Resource;
 
 
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,13 +11,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import Practice.ToDoList.DAO.LoginAuthenticationDAO;
 import Practice.ToDoList.DAO.UserDAO;
+import Practice.ToDoList.Model.ErrorMessages;
 import Practice.ToDoList.Model.LoginAuthenticationModel;
-import Practice.ToDoList.Model.UserModel;
 import Practice.ToDoList.Service.ListService;
 import Practice.ToDoList.Service.LoginAuthenticationService;
 import Practice.ToDoList.Service.LoginSecurity;
@@ -41,7 +45,8 @@ public class LoginAuthenticationResource {
 		@POST	
 		@Produces(MediaType.APPLICATION_JSON)
 		@Consumes(MediaType.APPLICATION_JSON)
-		public Token checkUsernamePassword(LoginAuthenticationModel postModel){
+		public Response checkUsernamePassword(LoginAuthenticationModel postModel){
+			try{
 			String username=dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getUsername();
 			String password = dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getPassword();
 			int id = dao.getUsernamePassword(postModel.getUsername(), postModel.getPassword()).getId();
@@ -53,18 +58,25 @@ public class LoginAuthenticationResource {
 			claims.put("password", password);
 			claims.put("email", email);
 		    Token token = new Token(Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS256,secret).compact());
-			return token;
-		
-
+			return Response.status(Status.ACCEPTED).entity(token).build();
+			}catch(Exception ex){
+				return Response.status(Status.UNAUTHORIZED).build();
+			}
 		}
 		@GET
 		@Path("/getuser")
 		@Produces(MediaType.APPLICATION_JSON)
-		public UserModel getInfoFromtoken(ContainerRequestContext requestContex){
-			
-				return UserService.getDataFromToken(requestContex.getHeaderString("Authorization"));
-			
-			
+		public Response getInfoFromtoken(ContainerRequestContext requestContex){
+			ErrorMessages messages = new ErrorMessages("Token is not valid",401);
+			Response responses = Response.status(Status.UNAUTHORIZED).entity(messages).build();
+				try{
+					return Response.status(Status.ACCEPTED).entity( UserService.getDataFromToken(requestContex.getHeaderString("Authorization"))).build();
+				
+				}catch(Exception ex){
+					
+					
+					throw new  WebApplicationException(responses);
+				}
 		}
 		
 		

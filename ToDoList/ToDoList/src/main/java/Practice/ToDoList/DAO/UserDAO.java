@@ -4,11 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import Practice.ToDoList.DataBase.DataBaseConnection;
+import Practice.ToDoList.Model.ListaModel;
 import Practice.ToDoList.Model.UserModel;
 
 public class UserDAO {
+	ListDAO listdao = new ListDAO();
 	public UserModel createUser(UserModel model){
 	Connection connection = DataBaseConnection.getConnection();
     try {
@@ -55,7 +58,12 @@ public class UserDAO {
 	    	   model.setUsername(rs.getString("username"));
 	    	   model.setPassword(rs.getString("password"));
 	    	   model.setEmail(rs.getString("email"));
+	    	  model.setListToDo(listdao.getListForuser(id));
+	    	   
+	    	   
+	    	   
 	    	  return model;
+	    	  
 	       }
 	       
 		}catch (SQLException e) {
